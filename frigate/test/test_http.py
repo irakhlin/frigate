@@ -388,6 +388,48 @@ class TestHttp(unittest.TestCase):
             stats = client.get("/stats").json
             assert stats == self.test_stats
 
+    def test_set_delete_sub_description(self):
+        app = create_app(
+            FrigateConfig(**self.minimal_config),
+            self.db,
+            None,
+            None,
+            None,
+            None,
+            None,
+            PlusApi(),
+        )
+        id = "123456.random"
+        description = "This is a description of events in the video"
+
+        with app.test_client() as client:
+            _insert_mock_event(id)
+            client.post(
+                f"/events/{id}/description",
+                data=json.dumps({"description": description}),
+                content_type="application/json",
+            )
+            event = client.get(f"/events/{id}").json
+            assert event
+            assert event["id"] == id
+            assert event["description"] == description
+            client.post(
+                f"/events/{id}/description",
+                data=json.dumps({"description": ""}),
+                content_type="application/json",
+            )
+            event = client.get(f"/events/{id}").json
+            assert event
+            assert event["id"] == id
+            assert event["description"] == ""
+
+            res = client.post(
+                f"/events/{id}/description",
+                data=json.dumps({"wrong_label": description}),
+                content_type="application/json",
+            )
+
+            assert res.status_code == 400
 
 def _insert_mock_event(
     id: str,

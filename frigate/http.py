@@ -137,6 +137,7 @@ def events_summary():
             Event.camera,
             Event.label,
             Event.sub_label,
+            Event.description,
             fn.strftime(
                 "%Y-%m-%d",
                 fn.datetime(
@@ -151,6 +152,7 @@ def events_summary():
             Event.camera,
             Event.label,
             Event.sub_label,
+            Event.description,
             (Event.start_time + seconds_offset).cast("int") / (3600 * 24),
             Event.zones,
         )
@@ -373,6 +375,37 @@ def delete_retain(id):
 
     return make_response(
         jsonify({"success": True, "message": "Event " + id + " un-retained"}), 200
+    )
+
+
+@bp.route("/events/<id>/description", methods=("POST",))
+def set_description(id):
+    try:
+        event: Event = Event.get(Event.id == id)
+    except DoesNotExist:
+        return make_response(
+            jsonify({"success": False, "message": "Event " + id + " not found"}), 404
+        )
+
+    json: dict[str, any] = request.get_json(silent=True) or {}
+    new_description = json.get("description")
+
+    if new_description is None:
+        return make_response(
+            jsonify({"success": False, "message": "No value received for description"}), 400
+        )
+
+    event.description = str(new_description)
+    event.save()
+
+    return make_response(
+        jsonify(
+            {
+                "success": True,
+                "message": "Event " + id + " description has been updated",
+            }
+        ),
+        200,
     )
 
 
@@ -945,6 +978,7 @@ def events():
         Event.false_positive,
         Event.box,
         Event.data,
+        Event.description,
     ]
 
     if camera != "all":
@@ -1358,7 +1392,7 @@ def go2rtc_streams():
     stream_data = r.json()
     for data in stream_data.values():
         for producer in data["producers"]:
-            producer["url"] = clean_camera_user_pass(producer.get("url", ""))
+            producer["url"] = clean_camera_user_pass(producer["url"])
     return jsonify(stream_data)
 
 
