@@ -229,6 +229,15 @@ Sub labels must be 100 characters or shorter.
 }
 ```
 
+### `POST /api/events/<id>/description`
+
+Set a text description for the event. For example, A person walked by towards the front yard, crossed the lawn diagonally without paying attention towards the camera's direction.
+
+```json
+{
+  "description": "A person walked by towards the front yard, crossed the lawn diagonally without paying attention towards the camera's direction.",
+```
+
 ### `GET /api/events/<id>/thumbnail.jpg`
 
 Returns a thumbnail for the event id optimized for notifications. Works while the event is in progress and after completion. Passing `?format=android` will convert the thumbnail to 2:1 aspect ratio.

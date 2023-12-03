@@ -20,6 +20,7 @@ import { Camera } from '../icons/Camera';
 import { Clock } from '../icons/Clock';
 import { Delete } from '../icons/Delete';
 import { Download } from '../icons/Download';
+import { Description } from '../icons/Description';
 import Menu, { MenuItem } from '../components/Menu';
 import CalendarIcon from '../icons/Calendar';
 import Calendar from '../components/Calendar';
@@ -801,7 +802,12 @@ function Event({
               {event.label.replaceAll('_', ' ')}
               {event.sub_label ? `: ${event.sub_label.replaceAll('_', ' ')}` : null}
             </div>
-
+            {event.description ? (
+              <div className="capitalize text-sm flex align-center">
+                <Description className="w-5 h-5 mr-2 inline" />
+                {event.description}
+                </div>
+            ) : null }
             <div className="text-sm flex">
               <Clock className="h-5 w-5 mr-2 inline" />
               {formatUnixTimestampToDateTime(event.start_time, { ...config.ui })}
