@@ -959,6 +959,7 @@ def events():
     is_submitted = request.args.get("is_submitted", type=int)
     min_length = request.args.get("min_length", type=float)
     max_length = request.args.get("max_length", type=float)
+    user_description = request.args.get("description", type=str)
 
     clauses = []
 
@@ -1036,6 +1037,9 @@ def events():
 
     if before:
         clauses.append((Event.start_time < before))
+
+    if user_description:
+        clauses.append(Event.description.contains(user_description))
 
     if time_range != DEFAULT_TIME_RANGE:
         # get timezone arg to ensure browser times are used

@@ -36,6 +36,11 @@ import { Score } from '../icons/Score';
 import { About } from '../icons/About';
 import MenuIcon from '../icons/Menu';
 import { MenuOpen } from '../icons/MenuOpen';
+import TextField from '../components/TextField';
+import { Search } from '../icons/Search';
+// import { SimpleInput } from '../components/SimpleInput'
+import SimpleInput from '../components/SimpleInput';
+
 
 const API_LIMIT = 25;
 
@@ -49,6 +54,10 @@ const monthsAgo = (num) => {
   let date = new Date();
   date.setMonth(date.getMonth() - num);
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() / 1000;
+};
+
+export const limitChar = (inputString, limit) => { 
+  return inputString.length > limit ? `${inputString.slice(0, limit)}...` : inputString
 };
 
 export default function Events({ path, ...props }) {
@@ -67,6 +76,7 @@ export default function Events({ path, ...props }) {
     favorites: props.favorites ?? 0,
     is_submitted: props.is_submitted ?? -1,
     event: props.event,
+    description: null,
   });
   const [state, setState] = useState({
     showDownloadMenu: false,
@@ -98,6 +108,8 @@ export default function Events({ path, ...props }) {
   });
 
   const [showInProgress, setShowInProgress] = useState((props.event || props.cameras || props.labels) == null);
+
+  const [inputText, setInputText] = useState("");
 
   const eventsFetcher = useCallback(
     (path, params) => {
@@ -300,6 +312,14 @@ export default function Events({ path, ...props }) {
     onFilter('is_submitted', searchParams.is_submitted);
   }, [searchParams, onFilter]);
 
+  const handleKeyEnter = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        onFilter('description', inputText)
+      }
+    }
+  );
+
   const isDone = (eventPages?.[eventPages.length - 1]?.length ?? 0) < API_LIMIT;
 
   // hooks for infinite scroll
@@ -370,7 +390,7 @@ export default function Events({ path, ...props }) {
       <Heading>Events</Heading>
       <div className="flex flex-wrap gap-2 items-center">
         <MultiSelect
-          className="basis-1/5 cursor-pointer rounded dark:bg-slate-800"
+          className="basis-1/5 cursor-pointer rounded dark:bg-slate-600"
           title="Cameras"
           options={filterValues.cameras}
           selection={searchParams.cameras}
@@ -379,7 +399,7 @@ export default function Events({ path, ...props }) {
           onSelectSingle={(item) => onFilter('cameras', item)}
         />
         <MultiSelect
-          className="basis-1/5 cursor-pointer rounded dark:bg-slate-800"
+          className="basis-1/5 cursor-pointer rounded dark:bg-slate-600"
           title="Labels"
           options={filterValues.labels}
           selection={searchParams.labels}
@@ -388,7 +408,7 @@ export default function Events({ path, ...props }) {
           onSelectSingle={(item) => onFilter('labels', item)}
         />
         <MultiSelect
-          className="basis-1/5 cursor-pointer rounded dark:bg-slate-800"
+          className="basis-1/5 cursor-pointer rounded dark:bg-slate-600"
           title="Zones"
           options={filterValues.zones}
           selection={searchParams.zones}
@@ -396,9 +416,22 @@ export default function Events({ path, ...props }) {
           onShowAll={() => onFilter('zones', ['all'])}
           onSelectSingle={(item) => onFilter('zones', item)}
         />
+        <div className="relative">
+        <SimpleInput
+            className="basis-1/5 cursor-pointer rounded dark:bg-slate-600 relative"
+            id="searchBoxField"
+            value={inputText}
+            label="search"
+            onChangeText={(item) => setInputText(item)}
+            onKeyPress={(event) => handleKeyEnter(event)}
+            />
+            <Button className="absolute top-0 end-0" onClick={() => onFilter('description', inputText)} type="iconOnly">
+              {<Search className="w-6" />}
+          </Button>
+        </div>
         {filterValues.sub_labels.length > 0 && (
           <MultiSelect
-            className="basis-1/5 cursor-pointer rounded dark:bg-slate-800"
+            className="basis-1/5 cursor-pointer rounded dark:bg-slate-600"
             title="Sub Labels"
             options={filterValues.sub_labels}
             selection={searchParams.sub_labels}
@@ -769,9 +802,10 @@ function Event({
   onReady,
   onSave,
   showSubmitToPlus,
+  extraInfo,
+  setExtraInfo,
 }) {
   const apiHost = useApiHost();
-
   return (
     <div className={className}>
       <div
@@ -802,12 +836,17 @@ function Event({
               {event.label.replaceAll('_', ' ')}
               {event.sub_label ? `: ${event.sub_label.replaceAll('_', ' ')}` : null}
             </div>
-            {event.description ? (
-              <div className="capitalize text-sm flex align-center">
-                <Description className="w-5 h-5 mr-2 inline" />
-                {event.description}
-                </div>
-            ) : null }
+             {(event.description === null || event.description === "")
+              ? null
+              : (
+                <div className="text-sm flex">
+                  <Description className="h-5 w-5 mr-2 inline" />
+                  <span className="d-inline-block text-truncate">
+                    {viewEvent !== event.id ? limitChar(event.description, 70) : event.description }
+                  </span>
+                  </div>
+              )
+             }
             <div className="text-sm flex">
               <Clock className="h-5 w-5 mr-2 inline" />
               {formatUnixTimestampToDateTime(event.start_time, { ...config.ui })}
