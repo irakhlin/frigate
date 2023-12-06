@@ -67,7 +67,6 @@ export default function SimpleInput({
               onBlur={handleBlur}
               onFocus={handleFocus}
               onInput={handleChange}
-              onKeyDown={handleKeyDown}
               readOnly={readonly}
               tabIndex="0"
               type={keyboardType}

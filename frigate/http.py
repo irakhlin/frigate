@@ -1140,15 +1140,16 @@ def create_event(camera_name, label):
         frame = current_app.detected_frames_processor.get_current_frame(camera_name)
 
         event_id = current_app.external_processor.create_manual_event(
-            camera_name,
-            label,
-            json.get("source_type", "api"),
-            json.get("sub_label", None),
-            json.get("score", 0),
-            json.get("duration", 30),
-            json.get("include_recording", True),
-            json.get("draw", {}),
-            frame,
+            camera=camera_name,
+            label=label,
+            source_type=json.get("source_type", "api"),
+            sub_label=json.get("sub_label", None),
+            description=json.get("description", None),
+            score=json.get("score", 0),
+            duration=json.get("duration", 30),
+            include_recording=json.get("include_recording", True),
+            draw=json.get("draw", {}),
+            snapshot_frame=frame,
         )
     except Exception as e:
         logger.error(e)
