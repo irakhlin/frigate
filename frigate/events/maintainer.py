@@ -210,6 +210,9 @@ class EventProcessor(threading.Thread):
                 },
             }
 
+            if event_data.get("description") is not None:
+                event[Event.description] = event_data["description"]
+
             # only overwrite the sub_label in the database if it's set
             if event_data.get("sub_label") is not None:
                 event[Event.sub_label] = event_data["sub_label"][0]
@@ -245,6 +248,7 @@ class EventProcessor(threading.Thread):
                 Event.start_time: event_data["start_time"],
                 Event.end_time: event_data["end_time"],
                 Event.thumbnail: event_data["thumbnail"],
+                Event.description: event_data["description"],
                 Event.has_clip: event_data["has_clip"],
                 Event.has_snapshot: event_data["has_snapshot"],
                 Event.zones: [],
