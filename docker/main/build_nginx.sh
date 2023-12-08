@@ -9,9 +9,9 @@ RTMP_MODULE_VERSION="1.2.2"
 
 cp /etc/apt/sources.list /etc/apt/sources.list.d/sources-src.list
 sed -i 's|deb http|deb-src http|g' /etc/apt/sources.list.d/sources-src.list
-apt-get update
+apt-get update -y --fix-missing
 
-apt-get -yqq build-dep nginx
+apt-get build-dep nginx -y
 
 apt-get -yqq install --no-install-recommends ca-certificates wget
 update-ca-certificates -f

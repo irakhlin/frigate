@@ -116,7 +116,7 @@ ARG DEBIAN_FRONTEND
 ARG TARGETARCH
 
 # Use a separate container to build wheels to prevent build dependencies in final image
-RUN apt-get -qq update \
+RUN apt-get -qq update -y --fix-missing \
     && apt-get -qq install -y \
     apt-transport-https \
     gnupg \

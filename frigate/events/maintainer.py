@@ -218,6 +218,9 @@ class EventProcessor(threading.Thread):
                 event[Event.sub_label] = event_data["sub_label"][0]
                 event[Event.data]["sub_label_score"] = event_data["sub_label"][1]
 
+            if event_data.get("title") is not None:
+                event[Event.title] = event_data["title"]
+
             (
                 Event.insert(event)
                 .on_conflict(
@@ -249,6 +252,7 @@ class EventProcessor(threading.Thread):
                 Event.end_time: event_data["end_time"],
                 Event.thumbnail: event_data["thumbnail"],
                 Event.description: event_data["description"],
+                Event.title: event_data["title"],
                 Event.has_clip: event_data["has_clip"],
                 Event.has_snapshot: event_data["has_snapshot"],
                 Event.zones: [],

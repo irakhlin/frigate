@@ -389,13 +389,18 @@ def set_description(id):
 
     json: dict[str, any] = request.get_json(silent=True) or {}
     new_description = json.get("description")
+    new_title = json.get("title")
 
     if new_description is None:
         return make_response(
             jsonify({"success": False, "message": "No value received for description"}), 400
         )
 
-    event.description = str(new_description)
+    event.description = new_description
+    
+    if new_title is not None:
+        event.title = new_title
+    
     event.save()
 
     return make_response(
@@ -1145,6 +1150,7 @@ def create_event(camera_name, label):
             source_type=json.get("source_type", "api"),
             sub_label=json.get("sub_label", None),
             description=json.get("description", None),
+            title=json.get("title", None),
             score=json.get("score", 0),
             duration=json.get("duration", 30),
             include_recording=json.get("include_recording", True),
