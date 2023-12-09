@@ -390,6 +390,7 @@ def set_description(id):
     json: dict[str, any] = request.get_json(silent=True) or {}
     new_description = json.get("description")
     new_title = json.get("title")
+    new_summary = json.get("summary")
 
     if new_description is None:
         return make_response(
@@ -400,6 +401,9 @@ def set_description(id):
     
     if new_title is not None:
         event.title = new_title
+
+    if new_summary is not None:
+        event.summary = new_summary
     
     event.save()
 

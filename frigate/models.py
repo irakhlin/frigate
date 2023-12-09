@@ -16,6 +16,7 @@ class Event(Model):  # type: ignore[misc]
     sub_label = CharField(max_length=100, null=True)
     description = TextField(null=True)
     title = TextField(null=True)
+    summary = TextField(null=True)
     camera = CharField(index=True, max_length=20)
     start_time = DateTimeField()
     end_time = DateTimeField()

@@ -221,6 +221,9 @@ class EventProcessor(threading.Thread):
             if event_data.get("title") is not None:
                 event[Event.title] = event_data["title"]
 
+            if event_data.get("summary") is not None:
+                event[Event.summary] = event_data["summary"]
+
             (
                 Event.insert(event)
                 .on_conflict(
@@ -253,6 +256,7 @@ class EventProcessor(threading.Thread):
                 Event.thumbnail: event_data["thumbnail"],
                 Event.description: event_data["description"],
                 Event.title: event_data["title"],
+                Event.summary: event_data["summary"],
                 Event.has_clip: event_data["has_clip"],
                 Event.has_snapshot: event_data["has_snapshot"],
                 Event.zones: [],

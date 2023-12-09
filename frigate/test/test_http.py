@@ -400,7 +400,8 @@ class TestHttp(unittest.TestCase):
             PlusApi(),
         )
         id = "123456.random"
-        description = "This is a description of events in the video"
+        description = "This is a description of the event."
+        title = "This is a title for the event."
 
         with app.test_client() as client:
             _insert_mock_event(id)
@@ -413,6 +414,31 @@ class TestHttp(unittest.TestCase):
             assert event
             assert event["id"] == id
             assert event["description"] == description
+
+            client.post(
+                f"/events/{id}/description",
+                data=json.dumps({"description": description,
+                                 "title": title}),
+                content_type="application/json",
+            )
+            event = client.get(f"/events/{id}").json
+            assert event
+            assert event["id"] == id
+            assert event["description"] == description
+            assert event["title"] == title
+
+            client.post(
+                f"/events/{id}/description",
+                data=json.dumps({"description": description,
+                                 "title": ""}),
+                content_type="application/json",
+            )
+            event = client.get(f"/events/{id}").json
+            assert event
+            assert event["id"] == id
+            assert event["description"] == description
+            assert event["title"] == ""
+
             client.post(
                 f"/events/{id}/description",
                 data=json.dumps({"description": ""}),
