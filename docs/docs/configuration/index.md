@@ -47,6 +47,13 @@ onvif:
   password: "{FRIGATE_RTSP_PASSWORD}"
 ```
 
+```yaml
+go2rtc:
+  rtsp:
+    username: "{FRIGATE_GO2RTC_RTSP_USERNAME}"
+    password: "{FRIGATE_GO2RTC_RTSP_PASSWORD}"
+```
+
 ### Full configuration reference:
 
 :::caution
@@ -70,11 +77,11 @@ mqtt:
   # NOTE: must be unique if you are running multiple instances
   client_id: frigate
   # Optional: user
-  # NOTE: MQTT user can be specified with an environment variables or docker secrets that must begin with 'FRIGATE_'.
+  # NOTE: MQTT user can be specified with an environment variable or docker secrets that must begin with 'FRIGATE_'.
   #       e.g. user: '{FRIGATE_MQTT_USER}'
   user: mqtt_user
   # Optional: password
-  # NOTE: MQTT password can be specified with an environment variables or docker secrets that must begin with 'FRIGATE_'.
+  # NOTE: MQTT password can be specified with an environment variable or docker secrets that must begin with 'FRIGATE_'.
   #       e.g. password: '{FRIGATE_MQTT_PASSWORD}'
   password: password
   # Optional: tls_ca_certs for enabling TLS using self-signed certs (default: None)
